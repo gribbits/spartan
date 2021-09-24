@@ -28,7 +28,8 @@ docker run --rm -v $(pwd):/Desktop:Z -w /Desktop gribbits/spartanscan:v0.1 -sV -
 
 # License
 Apache 2.0
-This Docker mage is deliberately free and opensouce, base distribution (Ubuntu) and packages, dependencies may be covered under different licenses that affect useage, distribution, linking, modification and permission. It is up to the user to use this Docker image consistent with all licensing aggreement herein.
+
+This Docker mage is free and open-source, base distribution (Ubuntu) and packages, dependencies may be covered under different licenses that affect usage, distribution, linking, modification and permission. It is up to the user to use this Docker image consistent with all licensing agreement herein.
 
 Nmap License
 https://nmap.org/npsl/
