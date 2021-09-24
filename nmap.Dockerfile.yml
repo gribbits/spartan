@@ -1,0 +1,53 @@
+# refs: Alex Bytes, bytesizedalex.com 
+# Instrumentiso hub.docker.com/r/instrumentisto/nmap/dockerfile
+# Paul Asadoorian, securityweekly.com podcast #709
+# docker.io, docs.docker.com/develop/develop-images/baseimages/
+
+# Build Stage... initialize base image (ubuntu20.04)
+FROM ubuntu:20.04
+
+# Define build-time variables for nmap ver. see nmap.org/dist/nmap
+ARG nmap_ver=7.92
+ARG build_rev=2
+
+# Build preReqs and dependencies
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends \
+    build-essential \
+    ca-certificates \
+    libgcrypt20-dev \
+    libssh-4 \
+    liblua5.2-dev \
+    libssl-dev \
+    libssh2-1-dev \
+    openssl \
+    zlib1g \
+    curl \
+    git; \
+    update-ca-certificates; \
+    rm -rf /var/lib/apt/lists/*
+# Get and install Nmap and vulners db from sources
+RUN curl -fL -o /tmp/nmap.tar.bz2 \
+    https://nmap.org/dist/nmap-${nmap_ver}.tar.bz2 \
+    && tar -xjf /tmp/nmap.tar.bz2 -C /tmp \
+    && cd /tmp/nmap* \
+    && ./configure \
+        --prefix=/opt \
+        --sysconfdir=/opt/etc \
+        --mandir=/opt/share/man \
+        --infodir=/opt/share/info \
+        --without-zenmap \
+        --without-ndiff \
+        --without-ncat \
+        --without-nping \
+        --without-nmap-update \
+        --with-openssl=/usr/lib \
+        --with-liblua=/usr/include \
+        && make \
+        && make install \
+        && git clone https://github.com/vulnersCom/nmap-vulners \
+           /opt/share/nmap/scripts/vulners \
+        && /opt/bin/nmap --script-updatedb \
+        && rm -rf /tmp/nmap*
+ENTRYPOINT ["/opt/bin/nmap"] 
